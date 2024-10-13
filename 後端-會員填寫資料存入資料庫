@@ -1,0 +1,84 @@
+from django.shortcuts import render
+from myapp.models import MemberInformation #載入models內的MemberInformation___________________________________________________
+#連接填寫加入會員需求需求
+def joininformation(request):
+    #抓取網頁中所有的POST值
+    try:
+        acc_num = request.POST["account"]
+        pw_num = request.POST["password"]
+        lst_str = request.POST["last_name"]
+        first_str = request.POST["first_name"]
+        birth_str = request.POST["date_of_birth"]
+        phone_num = request.POST["mobile_phone"]
+        email_str = request.POST["email_address"]
+        national_num = request.POST["national_id"]
+        address_str = request.POST["address"]
+        sex_str = request.POST["sex"]
+        f_cinema = request.POST["favorite_cinema"]
+        education_str = request.POST["education"]
+        occ_str = request.POST["occupation"]
+        marital_str = request.POST["marital_status"]
+        income_num = request.POST["household_income"]
+        l_f_genres =""
+        l_f_seat =""
+        for i in range(1,17):
+            genre_n = "f_genres_" + str(i)
+            try:
+                f_genres = request.POST[genre_n]
+                l_f_genres += f_genres + ","
+            except:
+                continue
+        for i in range(1,5):
+            seat_n = "seat_" + str(i)
+            try:
+                f_seat = request.POST[seat_n]
+                l_f_seat += f_seat + ","
+            except:
+                continue
+    #給每個值一個起始值
+    except:
+        acc_num = "none"
+        pw_num = "none"
+        lst_str = "none"
+        first_str = "none"
+        birth_str = "0000-00-00"
+        phone_num = "none"
+        email_str = "none@none.com"
+        national_num = "none"
+        address_str = "none"
+        sex_str = "Male"
+        f_cinema = "none"
+        education_str="none"
+        occ_str = "none"
+        marital_str = "Married"
+        income_num = "none"
+        l_f_genres = "none"
+        l_f_seat = "none"
+
+    #首次進入為GET狀態，將不會做存入資料庫的動作
+    res = r"it's not POST."
+    #檢測到POST時將會進行儲存資料
+    if request.method == "POST":
+        res = "OK"
+        memberInformation = MemberInformation(
+            account_number = acc_num, # 會員帳號
+            password = pw_num,  # 會員密碼
+            last_name = lst_str,  # 姓氏
+            first_name = first_str,  # 名字
+            date_of_birth = birth_str,  # 生日
+            mobile_phone = phone_num,  # 手機
+            email_address = email_str,  # 電子郵件
+            national_id = national_num,  # 身分證字號
+            address = address_str,  # 地址
+            gender = sex_str,  # 性別
+            favorite_cinema = f_cinema,  # 最常去的影城
+            education = education_str,  # 教育程度
+            occupation = occ_str,  # 職業
+            marital_status = marital_str,  # 婚姻狀況
+            household_income = income_num ,  # 年收入
+            favorite_genres = l_f_genres,  # 喜好電影類型
+            preferences = l_f_seat,  # 喜好的座位
+        )
+        memberInformation.save()
+
+    return render(request,"joininformation.html",locals())
